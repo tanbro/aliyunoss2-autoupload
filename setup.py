@@ -15,7 +15,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
 
-    description='Watch files in a directory and upload them to Aliyun OSS when file writing completed',
+    description='Watch files in a directory and upload them to Aliyun OSS on file writing completed',
     url='https://github.com/tanbro/aliyunoss2-autoupload',
     author='liu xue yan',
     author_email='liu_xue_yan@foxmail.com',
@@ -30,9 +30,16 @@ setup(
     install_requires=[
         'argparse;python_version<"2.7"',
         'enum34;python_version<"3.4"',
-        'PyYAML',
         'oss2',
+        'watchdog',
+        'PyYAML',
     ],
+
+    entry_points={
+        'console_scripts': [
+            'aliyunoss2-autoupload = aliyunoss2_autoupload.__main__:main',
+        ],
+    },
 
     extras_require={},
 
