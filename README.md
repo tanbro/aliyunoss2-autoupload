@@ -1,1 +1,0 @@
-# aliyunoss2-autoupload
