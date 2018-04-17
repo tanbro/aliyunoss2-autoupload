@@ -1,5 +1,7 @@
 # my ignores
 /config/
+/log/
+/bak/
 
 
 # Byte-compiled / optimized / DLL files

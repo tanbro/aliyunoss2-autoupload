@@ -31,7 +31,6 @@ setup(
         'argparse;python_version<"2.7"',
         'enum34;python_version<"3.4"',
         'oss2',
-        'watchdog',
         'PyYAML',
     ],
 

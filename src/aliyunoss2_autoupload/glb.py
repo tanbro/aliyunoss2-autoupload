@@ -4,4 +4,4 @@
 """global variables here
 """
 
-args = None  # type: argparse.Namespace
+config = {}  # type: dict
