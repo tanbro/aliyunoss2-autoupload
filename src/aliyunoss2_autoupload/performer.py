@@ -53,7 +53,7 @@ class Performer(LoggerMixin):
             if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:
                 task = Task(path)
                 tasks.append(Task(path))
-                cls.get_logger().info('run_once(): add task: %r', task)
+                cls.get_logger().info('add task: %r', task)
 
         cls._executor.map(cls._execute_task, tasks)
 
@@ -72,40 +72,43 @@ class Performer(LoggerMixin):
                 )
                 bucket.put_object_from_file(task.oss_key, task.path)
             except FileNotFoundError as e:
-                logger.exception(
-                    'execute_task(): upload %s => %s. FileNotFoundError: %s',
+                logger.error(
+                    'upload %s => %s. FileNotFoundError: %s',
                     task.path, task.oss_key, e
                 )
                 return False
             except OssError as e:
-                logger.exception(
-                    'execute_task(): upload %s => %s. OssError: %s',
+                logger.error(
+                    'upload %s => %s. OssError: %s',
                     task.path, task.oss_key, e
                 )
                 return False
+
             try:
                 logger.info(
-                    'execute_task(): backup %s => %s',
+                    'backup %s => %s',
                     task.path, task.bak_path
                 )
                 bak_dir = os.path.dirname(task.bak_path)
                 os.makedirs(bak_dir, exist_ok=True)
                 move(task.path, task.bak_path)
             except FileNotFoundError as e:
-                logger.exception(
-                    'execute_task(): backup %s => %s. FileNotFoundError: %s',
+                logger.error(
+                    'backup %s => %s. FileNotFoundError: %s',
                     task.path, task.oss_key, e
                 )
                 return False
             except OSError as e:
-                logger.exception(
-                    'execute_task(): backup %s => %s. OSError: %s',
+                logger.error(
+                    'backup %s => %s. OSError: %s',
                     task.path, task.oss_key, e
                 )
                 return False
+
         except Exception:
             logger.exception('execute_task(%r)', task)
             raise
+
         finally:
             logger.debug('execute_task(%r) <<<', task)
 
