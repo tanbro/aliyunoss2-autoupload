@@ -61,9 +61,9 @@ class Performer(LoggerMixin):
                 fs.append(fut)
 
         if fs:
-            logger.debug('wait tasks futures...')
+            logger.debug('%d task(s) pending ...', len(fs))
             concurrent.futures.wait(fs)
-            logger.debug('tasks futures completed. duration=%s', time() - now_ts)
+            logger.debug('%d task(s) completed. duration=%s', len(fs), time() - now_ts)
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
