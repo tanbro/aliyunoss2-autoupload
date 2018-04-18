@@ -66,7 +66,7 @@ class Performer(LoggerMixin):
                 cls._lock.release()
                 logger.debug('run_once() <<<')
         else:
-            logger.debug('run_once(): locked, pass')
+            logger.debug('run_once(): passed because locked')
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
