@@ -4,29 +4,36 @@
 from __future__ import absolute_import, unicode_literals
 
 import argparse
-import os
 import logging
-from time import sleep
+import os
+from time import sleep, time
+
 from pkg_resources import Requirement, resource_string
 
 from . import conf
 from . import glb
 from . import version
-from .watcher import Watcher
+from .performer import Performer
 from .utils.strhelper import to_str
 
-_parser = None  # type: ArgumentParser
+_parser = None  # type: argparse.ArgumentParser
 
 
-def set_get_arguments():  # type:()->Namespace
+def set_get_arguments():  # type:()->argparse.Namespace
     global _parser
     _parser = argparse.ArgumentParser(
-        prog=version.NAME, description='Watch files in a directory and upload them to Aliyun OSS on file writing completed')
-    _parser.add_argument('--version', action='version',
-                         version='%(prog)s {0}'.format(version.__version__))
+        prog=version.NAME,
+        description='Watch files in a directory and upload them to Aliyun OSS on file writing completed')
+    _parser.add_argument(
+        '--version', action='version',
+        version='%(prog)s {0}'.format(version.__version__)
+    )
 
-    subparsers = _parser.add_subparsers(dest='sub_command', description='',
-                                        help='<sub_command --help> Print the help of sub-commands')
+    subparsers = _parser.add_subparsers(
+        dest='sub_command',
+        description='',
+        help='<sub-command --help> Print the help of sub-commands'
+    )
 
     parser_run = subparsers.add_parser(
         'run',
@@ -73,18 +80,22 @@ def main():
         logger.info('Starting')
         logger.info('configuration: %s', glb.config)
         logger.info('-' * 60)
-        Watcher.initialize()
         try:
+            interval = float(glb.config['watcher']['interval'])
+            Performer.initial()
             while True:
-                Watcher.scan_once()
-                sleep(float(glb.config['watcher']['interval']))
+                ts = time()
+                Performer.run_once()
+                sleep_secs = interval - (time() - ts)
+                if sleep_secs > 0:
+                    sleep(sleep_secs)
         except KeyboardInterrupt:
             logger.warning('SIGINT')
         except Exception:
             logger.exception('')
             raise
         finally:
-            Watcher.finalize()
+            Performer.release()
             logger.info('=' * 60)
             logger.info('Stopped')
             logger.info('=' * 60)

@@ -29,3 +29,5 @@ watcher:
   patterns: "*.*"
   ## If find patterns recursively
   recursive: true
+  ## pool of at most max_workers threads to execute upload/backup tasks. If max_workers is None or not given, it will default to the number of processors on the machine, multiplied by 5 in Python3.5+, or cpu count in older versions.
+  max_workers: ~

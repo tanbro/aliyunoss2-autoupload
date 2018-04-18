@@ -30,6 +30,7 @@ setup(
     install_requires=[
         'argparse;python_version<"2.7"',
         'enum34;python_version<"3.4"',
+        'futures;python_version<"3.0"',
         'oss2',
         'PyYAML',
     ],
@@ -46,5 +47,5 @@ setup(
         '': ['data/*/*']
     },
 
-    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*'
+    python_requires='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*'
 )
