@@ -60,7 +60,7 @@ class Performer(LoggerMixin):
         logger.debug('run_once() <<<')
 
     @classmethod
-    def _execute_task(cls, task):  # type: (Task) -> None
+    def _execute_task(cls, task):  # type: (Task) -> bool
         logger = cls.get_logger()
         logger.debug('execute_task(%r) >>>', task)
         try:
@@ -73,9 +73,10 @@ class Performer(LoggerMixin):
                 bucket.put_object_from_file(task.oss_key, task.path)
             except OssError as e:
                 logger.exception(
-                    'execute_task(): put_object_from_file %s => %s. OssError: %s',
+                    'execute_task(): upload %s => %s. OssError: %s',
                     task.path, task.oss_key, e
                 )
+                return False
             try:
                 logger.info(
                     'execute_task(): backup %s => %s',
@@ -89,11 +90,14 @@ class Performer(LoggerMixin):
                     'execute_task(): backup %s => %s. OSError: %s',
                     task.path, task.oss_key, e
                 )
+                return False
         except Exception:
             logger.exception('execute_task(%r)', task)
             raise
         finally:
             logger.debug('execute_task(%r) <<<', task)
+
+        return True
 
     @classmethod
     def _get_oss_bucket(cls):
