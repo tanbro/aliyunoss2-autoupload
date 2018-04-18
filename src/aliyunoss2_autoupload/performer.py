@@ -71,6 +71,12 @@ class Performer(LoggerMixin):
                     task.path, task.oss_key
                 )
                 bucket.put_object_from_file(task.oss_key, task.path)
+            except FileNotFoundError as e:
+                logger.exception(
+                    'execute_task(): upload %s => %s. FileNotFoundError: %s',
+                    task.path, task.oss_key, e
+                )
+                return False
             except OssError as e:
                 logger.exception(
                     'execute_task(): upload %s => %s. OssError: %s',
@@ -85,6 +91,12 @@ class Performer(LoggerMixin):
                 bak_dir = os.path.dirname(task.bak_path)
                 os.makedirs(bak_dir, exist_ok=True)
                 move(task.path, task.bak_path)
+            except FileNotFoundError as e:
+                logger.exception(
+                    'execute_task(): backup %s => %s. FileNotFoundError: %s',
+                    task.path, task.oss_key, e
+                )
+                return False
             except OSError as e:
                 logger.exception(
                     'execute_task(): backup %s => %s. OSError: %s',
