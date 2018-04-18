@@ -5,8 +5,6 @@
 setuptools script file
 """
 
-from __future__ import absolute_import, unicode_literals
-
 from setuptools import setup, find_packages
 
 setup(
@@ -30,14 +28,11 @@ setup(
     setup_requires=['setuptools_scm', 'setuptools_scm_git_archive'],
 
     install_requires=[
-        'argparse;python_version<"2.7"',
-        'enum34;python_version<"3.4"',
-        'futures;python_version<"3.0"',
         'oss2',
         'PyYAML',
     ],
 
-    python_requires='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
+    python_requires='>=3.5',
 
     entry_points={
         'console_scripts': [
@@ -70,11 +65,7 @@ setup(
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

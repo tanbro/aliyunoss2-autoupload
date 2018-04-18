@@ -4,7 +4,6 @@
 Config file loader
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import logging.config
 import os
