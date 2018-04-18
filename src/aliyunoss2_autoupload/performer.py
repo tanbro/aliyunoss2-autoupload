@@ -81,11 +81,13 @@ class Performer(LoggerMixin):
                     'execute_task(): backup %s => %s',
                     task.path, task.bak_path
                 )
+                bak_dir = os.path.dirname(task.bak_path)
+                os.makedirs(bak_dir, exist_ok=True)
                 move(task.path, task.bak_path)
             except OSError as e:
                 logger.exception(
                     'execute_task(): backup %s => %s. OSError: %s',
-                    task.path, task.bak_path, e
+                    task.path, task.oss_key, e
                 )
         except Exception:
             logger.exception('execute_task(%r)', task)
@@ -116,7 +118,7 @@ class Task(object):
             rel_path = os.path.relpath(path, rel_dir)
         else:
             rel_path = os.path.relpath(path)
-        self._bak_path = os.path.join(glb.config['dir']['bak_dir'], rel_path)
+        self._bak_path = os.path.realpath(os.path.join(glb.config['dir']['bak_dir'], rel_path))
         upload_path = os.path.normpath(rel_path)
         upload_dir = glb.config['dir']['oss_dir']
         if upload_dir:
