@@ -8,6 +8,7 @@ import os
 import sys
 from glob import iglob
 from shutil import move
+from threading import Lock
 from time import time
 
 import oss2
@@ -28,11 +29,14 @@ __all__ = ['Performer']
 
 
 class Performer(LoggerMixin):
+    _lock = Lock()
     _executor = None  # type: concurrent.futures.Executor
 
     @classmethod
     def initial(cls):
         max_workers = glb.config['watcher'].get('max_workers')
+        if max_workers is not None:
+            max_workers = int(max_workers)
         cls._executor = concurrent.futures.ThreadPoolExecutor(max_workers)
 
     @classmethod
@@ -42,28 +46,31 @@ class Performer(LoggerMixin):
     @classmethod
     def run_once(cls):
         logger = cls.get_logger()
-        logger.debug('run_once() >>>')
 
         now_ts = time()
-        tasks = []  # type: List[Task]
+        fs = []  # type: List[concurrent.futures.Future]
 
-        for path in iglob(glb.config['watcher']['patterns'], recursive=bool(glb.config['watcher']['recursive'])):
+        for path in iglob(glb.config['watcher']['patterns'],
+                          recursive=bool(glb.config['watcher']['recursive'])):
             # is file write completed? (According to last modify time)
             mod_ts = os.path.getmtime(path)
             if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:
                 task = Task(path)
-                tasks.append(Task(path))
-                cls.get_logger().info('run_once(): add task: %r', task)
+                cls.get_logger().info('submit task: %r', task)
+                fut = cls._executor.submit(cls._execute_task, task)
+                fs.append(fut)
 
-        cls._executor.map(cls._execute_task, tasks)
-
-        logger.debug('run_once() <<<')
+        if fs:
+            logger.debug('%d task(s) pending ...', len(fs))
+            concurrent.futures.wait(fs)
+            logger.debug('%d task(s) completed. duration=%s', len(fs), time() - now_ts)
 
     @classmethod
-    def _execute_task(cls, task):  # type: (Task) -> None
+    def _execute_task(cls, task):  # type: (Task) -> bool
         logger = cls.get_logger()
         logger.debug('execute_task(%r) >>>', task)
         try:
+            now_ts = time()
             bucket = cls._get_oss_bucket()
             try:
                 logger.info(
@@ -71,29 +78,48 @@ class Performer(LoggerMixin):
                     task.path, task.oss_key
                 )
                 bucket.put_object_from_file(task.oss_key, task.path)
-            except OssError as e:
-                logger.exception(
-                    'execute_task(): put_object_from_file %s => %s. OssError: %s',
+            except FileNotFoundError as e:
+                logger.error(
+                    'upload %s => %s. FileNotFoundError: %s',
                     task.path, task.oss_key, e
                 )
+                return False
+            except OssError as e:
+                logger.error(
+                    'upload %s => %s. OssError: %s',
+                    task.path, task.oss_key, e
+                )
+                return False
+
             try:
                 logger.info(
-                    'execute_task(): backup %s => %s',
+                    'backup %s => %s',
                     task.path, task.bak_path
                 )
                 bak_dir = os.path.dirname(task.bak_path)
                 os.makedirs(bak_dir, exist_ok=True)
                 move(task.path, task.bak_path)
-            except OSError as e:
-                logger.exception(
-                    'execute_task(): backup %s => %s. OSError: %s',
+            except FileNotFoundError as e:
+                logger.error(
+                    'backup %s => %s. FileNotFoundError: %s',
                     task.path, task.oss_key, e
                 )
+                return False
+            except OSError as e:
+                logger.error(
+                    'backup %s => %s. OSError: %s',
+                    task.path, task.oss_key, e
+                )
+                return False
+
         except Exception:
             logger.exception('execute_task(%r)', task)
             raise
+
         finally:
-            logger.debug('execute_task(%r) <<<', task)
+            logger.debug('execute_task(%r) <<< duration=%s', task, time() - now_ts)
+
+        return True
 
     @classmethod
     def _get_oss_bucket(cls):
