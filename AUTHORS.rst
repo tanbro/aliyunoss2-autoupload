@@ -1,4 +1,4 @@
 Authors
 =======
 
-*. liu xue yan <liu_xue_yan@foxmail.com>
+* liu xue yan <liu_xue_yan@foxmail.com>
