@@ -8,6 +8,7 @@ import os
 import sys
 from glob import iglob
 from shutil import move
+from threading import Lock
 from time import time
 
 import oss2
@@ -28,6 +29,7 @@ __all__ = ['Performer']
 
 
 class Performer(LoggerMixin):
+    _lock = Lock()
     _executor = None  # type: concurrent.futures.Executor
 
     @classmethod
@@ -42,22 +44,29 @@ class Performer(LoggerMixin):
     @classmethod
     def run_once(cls):
         logger = cls.get_logger()
-        logger.debug('run_once() >>>')
 
-        now_ts = time()
-        tasks = []  # type: List[Task]
+        if cls._lock.acquire(False):
+            try:
+                logger.debug('run_once() >>>')
 
-        for path in iglob(glb.config['watcher']['patterns'], recursive=bool(glb.config['watcher']['recursive'])):
-            # is file write completed? (According to last modify time)
-            mod_ts = os.path.getmtime(path)
-            if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:
-                task = Task(path)
-                tasks.append(Task(path))
-                cls.get_logger().info('add task: %r', task)
+                now_ts = time()
+                tasks = []  # type: List[Task]
 
-        cls._executor.map(cls._execute_task, tasks)
+                for path in iglob(glb.config['watcher']['patterns'],
+                                  recursive=bool(glb.config['watcher']['recursive'])):
+                    # is file write completed? (According to last modify time)
+                    mod_ts = os.path.getmtime(path)
+                    if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:
+                        task = Task(path)
+                        tasks.append(Task(path))
+                        cls.get_logger().info('add task: %r', task)
 
-        logger.debug('run_once() <<<')
+                cls._executor.map(cls._execute_task, tasks)
+            finally:
+                cls._lock.release()
+                logger.debug('run_once() <<<')
+        else:
+            logger.debug('run_once(): locked, pass')
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
