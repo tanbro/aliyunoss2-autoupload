@@ -1,5 +1,5 @@
 CONTRIBUTING
-============
+************
 
 Contributions are welcome!
 
