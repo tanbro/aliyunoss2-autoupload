@@ -35,6 +35,8 @@ class Performer(LoggerMixin):
     @classmethod
     def initial(cls):
         max_workers = glb.config['watcher'].get('max_workers')
+        if max_workers is not None:
+            max_workers = int(max_workers)
         cls._executor = concurrent.futures.ThreadPoolExecutor(max_workers)
 
     @classmethod
@@ -60,14 +62,15 @@ class Performer(LoggerMixin):
 
         if fs:
             logger.debug('wait tasks futures...')
-            concurrent.futures.as_completed(fs)
-            logger.debug('tasks futures completed.')
+            concurrent.futures.wait(fs)
+            logger.debug('tasks futures completed. duration=%s', time() - now_ts)
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
         logger = cls.get_logger()
         logger.debug('execute_task(%r) >>>', task)
         try:
+            now_ts = time()
             bucket = cls._get_oss_bucket()
             try:
                 logger.info(
@@ -114,7 +117,7 @@ class Performer(LoggerMixin):
             raise
 
         finally:
-            logger.debug('execute_task(%r) <<<', task)
+            logger.debug('execute_task(%r) <<< duration=%s', task, time() - now_ts)
 
         return True
 
