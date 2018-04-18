@@ -11,6 +11,7 @@ oss:
   ## Access Key Secret of Aliyun OSS bucket
   access_key_secret: "your_access_key_secret"
 
+## Directory name configs
 dir:
   ## Upload files to OSS in this dir
   oss_dir: ""
