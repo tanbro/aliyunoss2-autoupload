@@ -45,28 +45,23 @@ class Performer(LoggerMixin):
     def run_once(cls):
         logger = cls.get_logger()
 
-        if cls._lock.acquire(False):
-            try:
-                logger.debug('run_once() >>>')
+        now_ts = time()
+        fs = []  # type: List[concurrent.futures.Future]
 
-                now_ts = time()
-                tasks = []  # type: List[Task]
+        for path in iglob(glb.config['watcher']['patterns'],
+                          recursive=bool(glb.config['watcher']['recursive'])):
+            # is file write completed? (According to last modify time)
+            mod_ts = os.path.getmtime(path)
+            if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:
+                task = Task(path)
+                cls.get_logger().info('submit task: %r', task)
+                fut = cls._executor.submit(cls._execute_task, task)
+                fs.append(fut)
 
-                for path in iglob(glb.config['watcher']['patterns'],
-                                  recursive=bool(glb.config['watcher']['recursive'])):
-                    # is file write completed? (According to last modify time)
-                    mod_ts = os.path.getmtime(path)
-                    if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:
-                        task = Task(path)
-                        tasks.append(Task(path))
-                        cls.get_logger().info('add task: %r', task)
-
-                cls._executor.map(cls._execute_task, tasks)
-            finally:
-                cls._lock.release()
-                logger.debug('run_once() <<<')
-        else:
-            logger.debug('run_once(): passed because locked')
+        if fs:
+            logger.debug('wait tasks futures...')
+            concurrent.futures.as_completed(fs)
+            logger.debug('tasks futures completed.')
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
