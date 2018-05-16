@@ -67,10 +67,12 @@ class Performer(LoggerMixin):
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
+        begin_ts = time()
+
         logger = cls.get_logger()
         logger.debug('execute_task(%r) >>>', task)
+
         try:
-            now_ts = time()
             bucket = cls._get_oss_bucket()
             try:
                 logger.info(
@@ -117,7 +119,7 @@ class Performer(LoggerMixin):
             raise
 
         finally:
-            logger.debug('execute_task(%r) <<< duration=%s', task, time() - now_ts)
+            logger.debug('execute_task(%r) <<< duration=%s', task, time() - begin_ts)
 
         return True
 

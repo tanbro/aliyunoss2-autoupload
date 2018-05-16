@@ -4,7 +4,6 @@
 Config file loader
 """
 
-
 import logging.config
 import os
 from io import FileIO
