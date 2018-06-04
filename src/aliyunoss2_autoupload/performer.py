@@ -126,10 +126,13 @@ class Performer(LoggerMixin):
     @classmethod
     def _get_oss_bucket(cls):
         cfg = glb.config['oss']
-        auth = oss2.Auth(cfg['access_key_id'], cfg['access_key_secret'])
-        is_cname = bool(cfg['cname'])
+        endpoint = cfg['endpoint'].strip()  # type: str
+        bucket_name = cfg['name'].strip()  # type: str
+        auth = oss2.Auth(cfg['access_key_id'].strip(), cfg['access_key_secret'].strip())
+        cname = cfg.get('cname', '')  # type: str
+        cname = '' if cname is None else cname.strip()
         bucket = oss2.Bucket(
-            auth, cfg['endpoint'], cfg['name'], is_cname=is_cname, enable_crc=_crc
+            auth, endpoint, bucket_name, is_cname=bool(cname), enable_crc=_crc
         )
         return bucket
 
