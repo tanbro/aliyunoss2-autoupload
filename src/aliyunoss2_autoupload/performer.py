@@ -8,22 +8,21 @@ import os
 import sys
 from glob import iglob
 from shutil import move
-from threading import Lock
 from time import time
 
 import oss2
 from oss2.exceptions import OssError
 
-from . import glb
-from .utils.loggermixin import LoggerMixin
-
 try:
     import crcmod._crcfunext
 except ImportError as err:
-    _crc = False
-    print('{0}. CRC will be DISABLED'.format(err), file=sys.stderr)
+    ENABLE_CRC = False
+    print('{0}. CRC DISABLED'.format(err), file=sys.stderr)
 else:
-    _crc = True
+    ENABLE_CRC = True
+
+from . import glb
+from .utils.loggermixin import LoggerMixin
 
 __all__ = ['Performer']
 
@@ -31,7 +30,6 @@ _PYTHON_VERSION_MAYOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 
 class Performer(LoggerMixin):
-    _lock = Lock()
     _executor = None  # type: concurrent.futures.Executor
 
     @classmethod
@@ -138,7 +136,7 @@ class Performer(LoggerMixin):
         cname = cfg.get('cname', '')  # type: str
         cname = '' if cname is None else cname.strip()
         bucket = oss2.Bucket(
-            auth, endpoint, bucket_name, is_cname=bool(cname), enable_crc=_crc
+            auth, endpoint, bucket_name, is_cname=bool(cname), enable_crc=ENABLE_CRC
         )
         return bucket
 

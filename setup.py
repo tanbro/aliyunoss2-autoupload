@@ -13,7 +13,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
 
-    description='Watch files in a directory and upload them to Aliyun OSS on file writing completed',
+    description='Monitor files by wildcard patterns, upload them to ALIYUN OSS, then move to backup directory.',
     url='https://github.com/tanbro/aliyunoss2-autoupload',
     author='liu xue yan',
     author_email='liu_xue_yan@foxmail.com',

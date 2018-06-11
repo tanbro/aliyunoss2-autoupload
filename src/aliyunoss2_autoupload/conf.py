@@ -10,6 +10,11 @@ from io import FileIO
 
 import yaml
 
+try:
+    from yaml import CLoader as YamlLoader
+except ImportError:
+    from yaml import Loader as YamlLoader
+
 from . import glb
 from . import version
 
@@ -20,11 +25,6 @@ ENVIRON_PROGRAM_CONFIG_PATH = '{0}_PROG_CONFIG'.format(version.NAME.upper())
 
 DEFAULT_LOGGING_CONFIG_PATH = 'config/log.yaml'
 ENVIRON_LOGGING_CONFIG_PATH = '{0}_LOG_CONFIG'.format(version.NAME.upper())
-
-try:
-    from yaml import CLoader as YamlLoader
-except ImportError:
-    from yaml import Loader as YamlLoader
 
 
 def load_program_config():

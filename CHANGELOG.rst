@@ -1,6 +1,16 @@
 Changelog
 *********
 
+develop
+=======
+
+:Date: 2018-06-11
+
+Changes
+-------
+* Support old `Python 2`, including `2.6`, `2.7`
+
+
 0.1a3
 =====
 The first ever-usable version.
