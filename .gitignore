@@ -2,6 +2,7 @@
 /config/
 /log/
 /bak/
+/test-reports/
 
 
 # Byte-compiled / optimized / DLL files

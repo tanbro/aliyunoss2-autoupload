@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals, with_statement, print_function, generators
+from __future__ import absolute_import, unicode_literals, with_statement, print_function
 
 import concurrent.futures
 import os
