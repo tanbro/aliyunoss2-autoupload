@@ -27,6 +27,8 @@ else:
 
 __all__ = ['Performer']
 
+_PYTHON_VERSION_MAYOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
+
 
 class Performer(LoggerMixin):
     _lock = Lock()
@@ -50,8 +52,12 @@ class Performer(LoggerMixin):
         now_ts = time()
         fs = []  # type: List[concurrent.futures.Future]
 
-        for path in iglob(glb.config['watcher']['patterns'],
-                          recursive=bool(glb.config['watcher']['recursive'])):
+        if _PYTHON_VERSION_MAYOR_MINOR >= '3.5':
+            iterator = iglob(glb.config['watcher']['patterns'], recursive=bool(glb.config['watcher']['recursive']))
+        else:
+            iterator = iglob(glb.config['watcher']['patterns'])
+
+        for path in iterator:
             # is file write completed? (According to last modify time)
             mod_ts = os.path.getmtime(path)
             if now_ts - mod_ts > glb.config['watcher']['write_complete_time']:

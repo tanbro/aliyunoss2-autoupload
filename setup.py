@@ -28,11 +28,11 @@ setup(
     setup_requires=['setuptools_scm', 'setuptools_scm_git_archive'],
 
     install_requires=[
-        'oss2',
-        'PyYAML',
+        'oss2>=2.2.0',
+        'PyYAML>=3.12',
     ],
 
-    python_requires='>=3.5',
+    python_requires='>=2.6,>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
 
     entry_points={
         'console_scripts': [
@@ -51,7 +51,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -65,6 +65,8 @@ setup(
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
