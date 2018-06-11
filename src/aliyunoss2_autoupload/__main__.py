@@ -30,7 +30,7 @@ def set_get_arguments():  # type:()->argparse.Namespace
     subparsers = _parser.add_subparsers(
         dest='sub_command',
         description='',
-        help='<sub-command --help> Print the help of sub-commands'
+        help='<sub_command --help> Print the help of sub_commands'
     )
 
     parser_run = subparsers.add_parser(
