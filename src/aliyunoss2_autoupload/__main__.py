@@ -62,7 +62,7 @@ def main():
         paths.extend([
             'data',
             'config-samples',
-            '{0}.yaml'.format(arguments.config)
+            '{0}.yml'.format(arguments.config)
         ])
         resource_name = os.path.join(*paths)
         txt = resource_string(Requirement.parse(version.NAME), resource_name)
