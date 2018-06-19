@@ -5,16 +5,12 @@ from __future__ import absolute_import, unicode_literals
 
 import argparse
 import logging
-import os
 from time import sleep, time
-
-from pkg_resources import Requirement, resource_string
 
 from . import conf
 from . import glb
 from . import version
 from .performer import Performer
-from .utils.strhelper import to_str
 
 _parser = None  # type: argparse.ArgumentParser
 
@@ -66,21 +62,13 @@ def main():
     arguments = set_get_arguments()
 
     if arguments.sub_command == 'echo_config_sample':
-        paths = version.NAMESPACE.split('.')
-        paths.extend([
-            'data',
-            'config-samples',
-            '{0}.yml'.format(arguments.config)
-        ])
-        resource_name = os.path.join(*paths)
-        txt = resource_string(Requirement.parse(version.NAME), resource_name)
-        print('{0}{1}{0}'.format(os.linesep, to_str(txt)))
+        conf.print_config(arguments.config)
 
     elif arguments.sub_command == 'run':
-        conf.load_logging_config()
+        conf.load_logging_config(arguments.logging_config_file)
         logger = get_logger()
 
-        conf.load_program_config()
+        conf.load_program_config(arguments.config_file)
 
         logger.info('-' * 60)
         logger.info('Starting')

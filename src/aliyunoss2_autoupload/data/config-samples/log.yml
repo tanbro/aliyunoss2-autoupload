@@ -5,8 +5,8 @@ root:
   handlers:
     - console
     - console_err
-    - file
-    - file_err
+#    - file
+#    - file_err
 
 handlers:
   console:
@@ -20,20 +20,20 @@ handlers:
     level:     WARNING
     stream:    'ext://sys.stderr'
 
-  file:
-    class:       logging.handlers.RotatingFileHandler
-    formatter:   brief
-    filename:    'log/out'
-    maxBytes:    10240000 # 10MB
-    backupCount: 100
-
-  file_err:
-    class:       logging.handlers.RotatingFileHandler
-    formatter:   brief
-    level:       'WARNING'
-    filename:    'log/error'
-    maxBytes:    10240000 # 10MB
-    backupCount: 100
+#  file:
+#    class:       logging.handlers.RotatingFileHandler
+#    formatter:   brief
+#    filename:    'log/out'
+#    maxBytes:    10240000 # 10MB
+#    backupCount: 100
+#
+#  file_err:
+#    class:       logging.handlers.RotatingFileHandler
+#    formatter:   brief
+#    level:       'WARNING'
+#    filename:    'log/error'
+#    maxBytes:    10240000 # 10MB
+#    backupCount: 100
 
 formatters:
   precise:

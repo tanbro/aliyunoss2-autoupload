@@ -4,17 +4,20 @@
 Config file loader
 """
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, print_function
 
 import logging.config
 import os
+import sys
 from io import FileIO
 
 import yaml
 from marshmallow import Schema, fields
+from pkg_resources import Requirement, resource_string
 
 from . import glb
 from . import version
+from .utils.strhelper import to_str
 
 try:
     from yaml import CSafeLoader as YamlLoader
@@ -91,7 +94,7 @@ class ConfSchema(Schema):
 conf_scheme = ConfSchema()
 
 
-def load_program_config():
+def load_program_config(file_path):
     """加载配置文件
 
     :return: 配置字典
@@ -101,7 +104,8 @@ def load_program_config():
     * 否则以相对路径 ``conf/aliyunoss2-autoupload.yml`` 作为配置文件路径。
     """
     # load
-    file_path = os.environ.get(ENVIRON_PROGRAM_CONFIG_PATH)
+    if not file_path:
+        file_path = os.environ.get(ENVIRON_PROGRAM_CONFIG_PATH)
     if not file_path:
         file_path = DEFAULT_PROGRAM_CONFIG_PATH
     with open(file_path) as f:
@@ -112,13 +116,14 @@ def load_program_config():
     return config
 
 
-def load_logging_config():
+def load_logging_config(file_path):
     """加载 logging 配置文件
 
     * 如果设置了环境变量 ``ALIYUNOSS2_AUTOUPLOAD_LOG_CONF`` ，以该环境变量的值作为配置文件路径。
     * 否则以相对路径 ``conf/aliyunoss2-autoupload.log.yml`` 作为配置文件路径。
     """
-    file_path = os.environ.get(ENVIRON_LOGGING_CONFIG_PATH)
+    if not file_path:
+        file_path = os.environ.get(ENVIRON_LOGGING_CONFIG_PATH)
     if not file_path:
         file_path = DEFAULT_LOGGING_CONFIG_PATH
     try:
@@ -128,3 +133,15 @@ def load_logging_config():
         logging.warning(
             'Load logging config file `%s` failed: %s', file_path, err)
         logging.basicConfig()
+
+
+def print_config(cfg, print_file=sys.stdout):
+    paths = version.NAMESPACE.split('.')
+    paths.extend([
+        'data',
+        'config-samples',
+        '{0}.yml'.format(cfg)
+    ])
+    resource_name = os.path.join(*paths)
+    txt = resource_string(Requirement.parse(version.NAME), resource_name)
+    print('{0}{1}{0}'.format(os.linesep, to_str(txt)), file=print_file)

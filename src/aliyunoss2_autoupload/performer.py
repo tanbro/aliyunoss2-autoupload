@@ -34,7 +34,7 @@ class Performer(LoggerMixin):
 
     @classmethod
     def initial(cls):
-        max_workers = glb.config['watcher'].get('max_workers')
+        max_workers = glb.config['watcher']['max_workers']
         if max_workers is not None:
             max_workers = int(max_workers)
         cls._executor = concurrent.futures.ThreadPoolExecutor(max_workers)
@@ -49,11 +49,12 @@ class Performer(LoggerMixin):
 
         now_ts = time()
         fs = []  # type: List[concurrent.futures.Future]
+        patterns = glb.config['watcher']['patterns']
 
         if _PYTHON_VERSION_MAYOR_MINOR >= '3.5':
-            iterator = iglob(glb.config['watcher']['patterns'], recursive=bool(glb.config['watcher'].get('recursive')))
+            iterator = iglob(patterns, recursive=bool(glb.config['watcher']['recursive']))
         else:
-            iterator = iglob(glb.config['watcher']['patterns'])
+            iterator = iglob(patterns)
 
         for path in iterator:
             # is file write completed? (According to last modify time)
@@ -66,8 +67,11 @@ class Performer(LoggerMixin):
 
         if fs:
             logger.debug('%d task(s) pending ...', len(fs))
-            concurrent.futures.wait(fs)
-            logger.debug('%d task(s) completed. duration=%s', len(fs), time() - now_ts)
+            done, not_done = concurrent.futures.wait(fs)
+            logger.debug(
+                '%d task(s) completed. count_of_done=%s, count_of_not_done=%s. duration=%s',
+                len(fs), len(done), len(not_done), time() - now_ts
+            )
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
@@ -170,7 +174,7 @@ class Task(object):
         if upload_dir:
             self._oss_key = '/'.join((upload_dir, upload_path))
         else:
-            self._oss_key = upload_dir
+            self._oss_key = upload_path
 
     @property
     def path(self):

@@ -31,10 +31,12 @@ setup(
         'oss2>=2.2.0',
         'PyYAML>=3.12',
         'marshmallow>=3.0.0b1',
+        'futures;python_version<="2.7"',
     ],
 
     tests_require=[
         'pytest',
+        'python-dotenv',
     ],
     test_suite='tests.test_all',
 
