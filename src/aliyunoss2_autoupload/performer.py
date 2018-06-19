@@ -137,7 +137,7 @@ class Performer(LoggerMixin):
                 return False
 
         except Exception:
-            logger.exception('execute_task(%r)'.format(task))
+            logger.exception('execute_task({!r})'.format(task))
             raise
 
         finally:
