@@ -11,9 +11,9 @@ from io import FileIO
 import yaml
 
 try:
-    from yaml import CLoader as YamlLoader
+    from yaml import CSafeLoader as YamlLoader
 except ImportError:
-    from yaml import Loader as YamlLoader
+    from yaml import SafeLoader as YamlLoader
 
 from . import glb
 from . import version
