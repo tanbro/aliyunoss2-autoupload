@@ -49,7 +49,7 @@ class OssAutoUploadTestCase(unittest.TestCase):
         keys = []
         upload_dir = os.path.join('tests', 'uploads', str_ver)
         os.makedirs(upload_dir)
-        for i in range(10):
+        for i in range(5):
             file_name = os.path.join(upload_dir, '{0}.dat'.format(i))
             keys.append(file_name)
         glb.config['watcher']['patterns'] = upload_dir + '/*.dat'
@@ -79,10 +79,10 @@ class OssAutoUploadTestCase(unittest.TestCase):
             keys = []
             upload_dir = os.path.join('tests', 'uploads', str_ver)
             os.makedirs(upload_dir)
-            for i in range(10):
+            for i in range(3):
                 file_name = os.path.join(upload_dir, '{0}.dat'.format(i))
                 keys.append(file_name)
-                for j in range(10):
+                for j in range(2):
                     dir_name = os.path.join(upload_dir, '{0}'.format(i))
                     file_name = os.path.join(dir_name, '{0}.dat'.format(j))
                     if not os.path.isdir(dir_name):
