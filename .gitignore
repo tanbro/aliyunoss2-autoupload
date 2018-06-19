@@ -1,5 +1,5 @@
 # my ignores
-/config/
+/conf/
 /log/
 /bak/
 /test-reports/

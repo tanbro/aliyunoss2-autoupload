@@ -20,10 +20,10 @@ from . import version
 
 __all__ = ['load_program_config', 'load_logging_config']
 
-DEFAULT_PROGRAM_CONFIG_PATH = 'config/prog.yml'
-ENVIRON_PROGRAM_CONFIG_PATH = '{0}_PROG_CONFIG'.format(version.NAME.upper())
+DEFAULT_PROGRAM_CONFIG_PATH = 'conf/{0}.yml'.format(version.NAME)
+ENVIRON_PROGRAM_CONFIG_PATH = '{0}_CONFIG'.format(version.NAME.upper())
 
-DEFAULT_LOGGING_CONFIG_PATH = 'config/log.yml'
+DEFAULT_LOGGING_CONFIG_PATH = 'conf/{0}.log.yml'.format(version.NAME)
 ENVIRON_LOGGING_CONFIG_PATH = '{0}_LOG_CONFIG'.format(version.NAME.upper())
 
 
