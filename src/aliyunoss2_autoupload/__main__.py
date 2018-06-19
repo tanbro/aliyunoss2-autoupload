@@ -40,10 +40,16 @@ def set_get_arguments():  # type:()->argparse.Namespace
         help='Start to run then program. It will monitor and upload files continuously.')
     parser_run.add_argument(
         '--config-file', '-c', type=str, default='',
-        help='The program configuration file')
+        help='''The program configuration file.
+        The program will first try to load configuration file from environment variable ${ALIYUNOSS2_AUTOUPLOAD_CONF}.
+        If the environment variable not assigned, then try to load configuration file from "conf/aliyunoss2-autoupload.yml"
+        ''')
     parser_run.add_argument(
         '--logging-config-file', '-l', type=str, default='',
-        help='The logging configuration file')
+        help='''The logging configuration file.
+        The program will first try to load configuration file from environment variable ${ALIYUNOSS2_AUTOUPLOAD_LOG_CONF}.
+        If the environment variable not assigned, then try to load configuration file from "conf/aliyunoss2-autoupload.log.yml"
+        ''')
 
     parser_echo_config_sample = subparsers.add_parser(
         'echo_config_sample',

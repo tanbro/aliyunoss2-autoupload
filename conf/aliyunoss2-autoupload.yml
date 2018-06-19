@@ -26,9 +26,9 @@ watcher:
   ## If the interval between the current time and the file\'s modification time is greater than this value, the write is considered complete.
   write_complete_time: 30
   ## Pattern of the files to watch and upload
-  patterns: "./**/Pipfile.lock"
+  patterns: "files/1.dat"
   ## If find patterns recursively
-  recursive: true
+  recursive: false
   ## pool of at most max_workers threads to execute upload/backup tasks. If max_workers is None or not given, it will default to the number of processors on the machine, multiplied by 5 in Python3.5+, or cpu count in older versions.
   max_workers: ~
 

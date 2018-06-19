@@ -24,10 +24,10 @@ except ImportError:
 __all__ = ['load_program_config', 'load_logging_config']
 
 DEFAULT_PROGRAM_CONFIG_PATH = 'conf/{0}.yml'.format(version.NAME)
-ENVIRON_PROGRAM_CONFIG_PATH = '{0}_CONFIG'.format(version.NAME.upper())
+ENVIRON_PROGRAM_CONFIG_PATH = '{0}_CONF'.format(version.NAME.upper().replace('-', '_'))
 
 DEFAULT_LOGGING_CONFIG_PATH = 'conf/{0}.log.yml'.format(version.NAME)
-ENVIRON_LOGGING_CONFIG_PATH = '{0}_LOG_CONFIG'.format(version.NAME.upper())
+ENVIRON_LOGGING_CONFIG_PATH = '{0}_LOG_CONF'.format(version.NAME.upper().replace('-', '_'))
 
 
 class OssSchema(Schema):
@@ -97,8 +97,8 @@ def load_program_config():
     :return: 配置字典
     :rtype: dict
 
-    * 如果设置了环境变量 ``DEFAULT_PROGRAM_CONFIG_PATH`` ，以该环境变量的值作为配置文件路径。
-    * 否则以相对路径 ``config/prog.yaml`` 作为配置文件路径。
+    * 如果设置了环境变量 ``ALIYUNOSS2_AUTOUPLOAD_CONF`` ，以该环境变量的值作为配置文件路径。
+    * 否则以相对路径 ``conf/aliyunoss2-autoupload.yml`` 作为配置文件路径。
     """
     # load
     file_path = os.environ.get(ENVIRON_PROGRAM_CONFIG_PATH)
@@ -115,8 +115,8 @@ def load_program_config():
 def load_logging_config():
     """加载 logging 配置文件
 
-    * 如果设置了环境变量 ``DEFAULT_LOGGING_CONFIG_PATH`` ，以该环境变量的值作为配置文件路径。
-    * 否则以相对路径 ``config/log.yaml`` 作为配置文件路径。
+    * 如果设置了环境变量 ``ALIYUNOSS2_AUTOUPLOAD_LOG_CONF`` ，以该环境变量的值作为配置文件路径。
+    * 否则以相对路径 ``conf/aliyunoss2-autoupload.log.yml`` 作为配置文件路径。
     """
     file_path = os.environ.get(ENVIRON_LOGGING_CONFIG_PATH)
     if not file_path:
