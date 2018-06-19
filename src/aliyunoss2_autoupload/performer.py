@@ -7,7 +7,7 @@ import concurrent.futures
 import os
 import sys
 from glob import iglob
-from os import cpu_count
+from multiprocessing import cpu_count
 from shutil import move
 from time import time
 
