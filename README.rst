@@ -28,9 +28,13 @@ After the package installed, run the command in a terminator, show help messages
     :target: https://pypi.org/project/aliyunoss2-autoupload/
 
 .. |PypiLicense| image:: https://img.shields.io/pypi/l/aliyunoss2-autoupload.svg
+    :target: https://pypi.org/project/aliyunoss2-autoupload/
 
 .. |PypiPythonVersion| image:: https://img.shields.io/pypi/pyversions/aliyunoss2-autoupload.svg
+    :target: https://pypi.org/project/aliyunoss2-autoupload/
 
 .. |PypiStatus| image:: https://img.shields.io/pypi/status/aliyunoss2-autoupload.svg
+    :target: https://pypi.org/project/aliyunoss2-autoupload/
 
 .. |PypiFormat| image:: https://img.shields.io/pypi/format/aliyunoss2-autoupload.svg
+    :target: https://pypi.org/project/aliyunoss2-autoupload/
