@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals, with_statement
-
 """
 Some bytes/unicode/str/text functions
 """
+
+from __future__ import absolute_import, unicode_literals, with_statement
 
 __all__ = ['to_bytes', 'to_str', 'to_unicode']
 

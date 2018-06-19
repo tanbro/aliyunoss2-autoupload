@@ -127,8 +127,8 @@ def load_logging_config(file_path):
     if not file_path:
         file_path = DEFAULT_LOGGING_CONFIG_PATH
     try:
-        config = yaml.load(FileIO(file_path), YamlLoader)
-        logging.config.dictConfig(config)
+        data = yaml.load(FileIO(file_path), YamlLoader)
+        logging.config.dictConfig(data)
     except Exception as err:
         logging.warning(
             'Load logging config file `%s` failed: %s', file_path, err)

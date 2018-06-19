@@ -7,6 +7,7 @@ import concurrent.futures
 import os
 import sys
 from glob import iglob
+from multiprocessing import cpu_count
 from shutil import move
 from time import time
 
@@ -37,6 +38,12 @@ class Performer(LoggerMixin):
         max_workers = glb.config['watcher']['max_workers']
         if max_workers is not None:
             max_workers = int(max_workers)
+        else:
+            if _PYTHON_VERSION_MAYOR_MINOR < '3.5':
+                # Changed in version 3.5:
+                # If max_workers is None or not given,
+                # it will default to the number of processors on the machine, multiplied by 5
+                max_workers = cpu_count() * 5
         cls._executor = concurrent.futures.ThreadPoolExecutor(max_workers)
 
     @classmethod
@@ -130,7 +137,7 @@ class Performer(LoggerMixin):
                 return False
 
         except Exception:
-            logger.exception('execute_task(%r)'.format(task))
+            logger.exception('execute_task({!r})'.format(task))
             raise
 
         finally:
