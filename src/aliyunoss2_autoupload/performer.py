@@ -51,7 +51,7 @@ class Performer(LoggerMixin):
         fs = []  # type: List[concurrent.futures.Future]
 
         if _PYTHON_VERSION_MAYOR_MINOR >= '3.5':
-            iterator = iglob(glb.config['watcher']['patterns'], recursive=bool(glb.config['watcher']['recursive']))
+            iterator = iglob(glb.config['watcher']['patterns'], recursive=bool(glb.config['watcher'].get('recursive')))
         else:
             iterator = iglob(glb.config['watcher']['patterns'])
 
@@ -119,7 +119,7 @@ class Performer(LoggerMixin):
                 return False
 
         except Exception:
-            logger.exception('execute_task(%r)', task)
+            logger.exception('execute_task(%r)'.format(task))
             raise
 
         finally:
@@ -153,7 +153,11 @@ class Task(object):
             rel_path = os.path.relpath(path, rel_dir)
         else:
             rel_path = os.path.relpath(path)
-        self._bak_path = os.path.realpath(os.path.join(glb.config['dir']['bak_dir'], rel_path))
+        bak_dir = glb.config['dir'].get('bak_dir')
+        if bak_dir is None:
+            self._bak_path = os.path.realpath(os.path.join(glb.config['dir']['bak_dir'], rel_path))
+        else:
+            self._bak_path = None
         upload_path = os.path.normpath(rel_path)
         upload_dir = glb.config['dir']['oss_dir']
         if upload_dir:

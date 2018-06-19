@@ -30,6 +30,7 @@ setup(
     install_requires=[
         'oss2>=2.2.0',
         'PyYAML>=3.12',
+        'marshmallow>=3.0.0b1',
     ],
 
     tests_require=[
