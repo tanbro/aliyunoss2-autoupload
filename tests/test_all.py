@@ -15,6 +15,8 @@ _PYTHON_VERSION_MAYOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
 
 load_dotenv()
 
+str_ver = '{0[0]}.{0[1]}-{1}'.format(sys.version_info, sys.platform)
+
 
 class OssAutoUploadTestCase(unittest.TestCase):
     def setUp(self):
@@ -42,37 +44,17 @@ class OssAutoUploadTestCase(unittest.TestCase):
         Performer.release()
         shutil.rmtree('tests/conf')
 
-    def test_upload_one(self):
-        # Fake watcher config
-        key = 'tests/uploads/1.dat'
-        glb.config['watcher']['patterns'] = 'tests/uploads/*'
-        glb.config['watcher']['write_complete_time'] = 0.1
-        # generate a random binary file and upload
-        os.makedirs('tests/uploads')
-        try:
-            with open(key, 'wb') as f:
-                f.write(os.urandom(1024))  # replace 1024 with size_kb if not unreasonably large
-            # wait for `write_complete_time`
-            sleep(0.1)
-            # scan and upload
-            Performer.run_once()
-        finally:
-            shutil.rmtree('tests/uploads')
-
-        # check if uploaded path ok
-        bucket = Performer._get_oss_bucket()
-        self.assertTrue(bucket.object_exists(key))
-        bucket.delete_object(key)
-
     def test_upload_many(self):
         # Fake watcher config
         keys = []
-        for i in range(10):
-            keys.append(os.path.join('tests', 'uploads', '{0}.dat'.format(i)))
-        glb.config['watcher']['patterns'] = 'tests/uploads/*'
+        upload_dir = os.path.join('tests', 'uploads', str_ver)
+        os.makedirs(upload_dir)
+        for i in range(5):
+            file_name = os.path.join(upload_dir, '{0}.dat'.format(i))
+            keys.append(file_name)
+        glb.config['watcher']['patterns'] = upload_dir + '/*.dat'
         glb.config['watcher']['write_complete_time'] = 0.1
         # generate a random binary file and upload
-        os.makedirs('tests/uploads')
         try:
             for key in keys:
                 with open(key, 'wb') as f:
@@ -82,7 +64,7 @@ class OssAutoUploadTestCase(unittest.TestCase):
             # scan and upload
             Performer.run_once()
         finally:
-            shutil.rmtree('tests/uploads')
+            shutil.rmtree(upload_dir)
 
         # check if uploaded path ok
         bucket = Performer._get_oss_bucket()
@@ -95,19 +77,21 @@ class OssAutoUploadTestCase(unittest.TestCase):
         def test_upload_recursive(self):
             # Fake watcher config
             keys = []
-            for i in range(10):
-                os.makedirs(os.path.join('tests', 'uploads', '{0}'.format(i)))
-                keys.append(os.path.join('tests', 'uploads', '{0}.dat'.format(i)))
-                for j in range(10):
-                    dir_name = os.path.join('tests', 'uploads', '{0}'.format(i))
+            upload_dir = os.path.join('tests', 'uploads', str_ver)
+            os.makedirs(upload_dir)
+            for i in range(3):
+                file_name = os.path.join(upload_dir, '{0}.dat'.format(i))
+                keys.append(file_name)
+                for j in range(2):
+                    dir_name = os.path.join(upload_dir, '{0}'.format(i))
+                    file_name = os.path.join(dir_name, '{0}.dat'.format(j))
                     if not os.path.isdir(dir_name):
                         os.makedirs(dir_name)
-                    keys.append(os.path.join('tests', 'uploads', '{0}'.format(i), '{0}.dat'.format(j)))
-            glb.config['watcher']['patterns'] = 'tests/uploads/**/*'
+                    keys.append(file_name)
+            glb.config['watcher']['patterns'] = upload_dir + '/**/*.dat'
             glb.config['watcher']['recursive'] = True
             glb.config['watcher']['write_complete_time'] = 0.1
             # generate a random binary file and upload
-            os.makedirs('tests/uploads', exist_ok=True)
             try:
                 for key in keys:
                     with open(key, 'wb') as f:
@@ -117,7 +101,7 @@ class OssAutoUploadTestCase(unittest.TestCase):
                 # scan and upload
                 Performer.run_once()
             finally:
-                shutil.rmtree('tests/uploads')
+                shutil.rmtree(upload_dir)
 
             # check if uploaded path ok
             bucket = Performer._get_oss_bucket()
