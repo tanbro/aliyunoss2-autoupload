@@ -20,7 +20,7 @@ dir:
   ## Upload files to OSS in this dir
   oss_dir: ""
   ## Move uploaded file the the directory. It MUST be a different dir from where the files are. If not, the file will be uploaded again and again.
-  bak_dir: "bak"
+  bak_dir: ""
 
 ## watcher configs
 watcher:

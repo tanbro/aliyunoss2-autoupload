@@ -98,13 +98,20 @@ class Performer(LoggerMixin):
                 return False
 
             try:
-                logger.info(
-                    'backup %s => %s',
-                    task.path, task.bak_path
-                )
-                bak_dir = os.path.dirname(task.bak_path)
-                os.makedirs(bak_dir, exist_ok=True)
-                move(task.path, task.bak_path)
+                if task.bak_dir:
+                    logger.info(
+                        'backup %s => %s',
+                        task.path, task.bak_dir
+                    )
+                    bak_dir = os.path.dirname(task.bak_dir)
+                    os.makedirs(bak_dir, exist_ok=True)
+                    move(task.path, task.bak_dir)
+                else:
+                    logger.info(
+                        'remove %s',
+                        task.path
+                    )
+                    os.remove(task.path)
             except FileNotFoundError as e:
                 logger.error(
                     'backup %s => %s. FileNotFoundError: %s',
@@ -146,7 +153,7 @@ class Task(object):
     def __init__(self, path):
         self._path = path
         self._oss_key = ''
-        self._bak_path = ''
+        self._bak_dir = ''
 
         rel_dir = glb.config['dir']['rel_dir']
         if rel_dir:
@@ -154,10 +161,10 @@ class Task(object):
         else:
             rel_path = os.path.relpath(path)
         bak_dir = glb.config['dir'].get('bak_dir')
-        if bak_dir is None:
-            self._bak_path = os.path.realpath(os.path.join(glb.config['dir']['bak_dir'], rel_path))
+        if bak_dir:
+            self._bak_dir = os.path.realpath(os.path.join(glb.config['dir']['bak_dir'], rel_path))
         else:
-            self._bak_path = None
+            self._bak_dir = None
         upload_path = os.path.normpath(rel_path)
         upload_dir = glb.config['dir']['oss_dir']
         if upload_dir:
@@ -174,10 +181,10 @@ class Task(object):
         return self._oss_key
 
     @property
-    def bak_path(self):
-        return self._bak_path
+    def bak_dir(self):
+        return self._bak_dir
 
     def __repr__(self):
         rep = super(Task, self).__repr__()
         return '{0}(path={1}, oss_key={2}, bak_path={3})'.format(
-            rep, self.path, self.oss_key, self.bak_path)
+            rep, self.path, self.oss_key, self.bak_dir)
