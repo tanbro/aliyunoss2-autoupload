@@ -1,15 +1,23 @@
 Changelog
 *********
 
-develop
-=======
+developing
+==========
 
-:Date: 2018-06-11
+:Date: 2018-06-19
 
 Changes
 -------
-* Support old `Python 2`, including `2.6`, `2.7`
+* Support old `Python 2.7`, `Python 3.4`
+* Config file name extension changed from ``".yaml"`` to ``".yml"``
+* Default config file environment variable name
+* Default config file path if no environment variable
 
+Adds
+----
+* Some simple test cases
+* CircleCI
+* Codacy
 
 0.1a3
 =====
