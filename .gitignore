@@ -3,6 +3,7 @@
 /log/
 /bak/
 /test-reports/
+.pytest_cache/
 
 
 # Byte-compiled / optimized / DLL files
