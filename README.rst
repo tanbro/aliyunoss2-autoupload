@@ -11,7 +11,9 @@ Monitor files by wildcard patterns, upload them to ALIYUN OSS, then move to back
 Usages
 ******
 
-After the package installed, run the command in a terminator, show help messages::
+After the package installed, run the command in a terminator, show help messages
+
+.. code-block:: console
 
     $ aliyunoss2-autoupload --help
     usage: aliyunoss2-autoupload [-h] [--version] {run,echo_config_sample} ...
@@ -31,7 +33,7 @@ After the package installed, run the command in a terminator, show help messages
                             files continuously.
         echo_config_sample  Echo configure file sample
 
-::
+.. code-block:: console
 
     $ aliyunoss2-autoupload run --help
     usage: aliyunoss2-autoupload run [-h] [--config-file CONFIG_FILE]
