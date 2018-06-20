@@ -1,6 +1,19 @@
 Changelog
 *********
 
+0.1b2
+=====
+
+:Date: 2018-06-20
+
+Adds
+----
+* More detailed documents.
+
+Bug Fixes:
+----------
+* Remove files in `.gitignore`, but tracked.
+
 0.1b1
 =====
 
