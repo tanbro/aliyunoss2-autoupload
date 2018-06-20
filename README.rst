@@ -118,9 +118,10 @@ The YAML_ file is like blow:
         max_workers: ~
 
 Also, the program will first try to load logging configuration file by environment variable ``ALIYUNOSS2_AUTOUPLOAD_LOG_CONF``.
-If the environment variable not assigned, then try to load configuration file `"conf/aliyunoss2-autoupload.log.yml"`
+If the environment variable not assigned, then try to load configuration file `"conf/aliyunoss2-autoupload.log.yml"`.
 
-:reference: <https://docs.python.org/3/library/logging.config.html>
+Logging config file is also YAML_.
+Go to https://docs.python.org/3/library/logging.config.html for more information about Python logging config.
 
 ------
 
