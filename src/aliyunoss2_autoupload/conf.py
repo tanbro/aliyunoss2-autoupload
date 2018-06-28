@@ -9,7 +9,6 @@ from __future__ import absolute_import, unicode_literals, print_function
 import logging.config
 import os
 import sys
-from io import StringIO, TextIOBase
 
 import yaml
 from marshmallow import Schema, fields
@@ -98,10 +97,13 @@ def load_yml(obj):
     if isinstance(obj, str):
         with open(obj) as f:
             data = f.read()
-    elif isinstance(obj, (StringIO, TextIOBase)):
-        data = obj.read()
     else:
-        raise TypeError('Invalid file-like object or stream: {0!r}'.format(obj))
+        try:
+            read_meth = getattr(obj, 'read')
+        except AttributeError:
+            raise
+        else:
+            data = read_meth()
     return yaml.load(data, YamlLoader)
 
 
@@ -140,8 +142,11 @@ def load_logging_config(obj=None):
         data = load_yml(obj)
         logging.config.dictConfig(data)
     except Exception as err:
-        logging.warning(
-            'Load logging config file %r failed: %s', obj, err)
+        err_msg = 'Load logging config file {0!r} failed: {1}'.format(obj, err)
+        print('-' * 60, file=sys.stderr)
+        print(err_msg, file=sys.stderr)
+        print('-' * 60, file=sys.stderr)
+        logging.warning(err_msg)
         logging.basicConfig()
 
 

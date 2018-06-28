@@ -20,7 +20,7 @@ _parser = None  # type: argparse.ArgumentParser
 _arguments = None  # type: argparse.Namespace
 
 
-def parse_arguments():  # type:()->argparse.Namespace
+def parse_arguments(args=None):  # type:()->argparse.Namespace
     global _parser
     _parser = argparse.ArgumentParser(
         prog=version.NAME,
@@ -64,13 +64,13 @@ def parse_arguments():  # type:()->argparse.Namespace
         help='Configure file to echo')
 
     global _arguments
-    _arguments = _parser.parse_args()
+    _arguments = _parser.parse_args(args)
     return _arguments
 
 
 def main():
     if _arguments is None:
-        parse_arguments()
+        parse_arguments(sys.argv[1:])
 
     if _arguments.sub_command == 'echo_config_sample':
         conf.print_config(_arguments.config)
