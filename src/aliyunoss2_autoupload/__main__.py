@@ -39,6 +39,10 @@ def set_get_arguments():  # type:()->argparse.Namespace
         'run',
         help='Start to run then program. It will monitor and upload files continuously.')
     parser_run.add_argument(
+        '--only-once', '-o', action='store_true',
+        help='Upload only once, then exit. Will NOT monitor files. (default=%(default)s)'
+    )
+    parser_run.add_argument(
         '--config-file', '-c', type=str, default='',
         help='''The program configuration file.
         The program will first try to load configuration file by environment variable ${ALIYUNOSS2_AUTOUPLOAD_CONF}.
@@ -106,10 +110,14 @@ def main():
                     initialed = True
                 Performer.run_once()
 
+                if arguments.only_once:
+                    break
+
                 interval = float(glb.config['watcher']['interval'])
                 sleep_secs = interval - (time() - ts)
                 if sleep_secs > 0:
                     sleep(sleep_secs)
+
         except KeyboardInterrupt:
             logger.warning('SIGINT')
         except Exception:

@@ -7,6 +7,7 @@ develop
 Added
 -----
 * Reload configuration every time before scanning files.
+* `--only-once` command line option.
 
 0.1b2
 =====
