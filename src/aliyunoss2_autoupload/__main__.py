@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, print_function
 
 import argparse
 import logging
+import sys
 from time import sleep, time
+
+from marshmallow import ValidationError
+from yaml import YAMLError
 
 from . import conf
 from . import glb
@@ -68,18 +72,41 @@ def main():
         conf.load_logging_config(arguments.logging_config_file)
         logger = get_logger()
 
-        conf.load_program_config(arguments.config_file)
-
         logger.info('-' * 60)
         logger.info('Starting')
-        logger.info('configuration: %s', glb.config)
         logger.info('-' * 60)
+
+        initialed = False
+
         try:
-            interval = float(glb.config['watcher']['interval'])
-            Performer.initial()
             while True:
                 ts = time()
+
+                try:
+                    conf.load_program_config(arguments.config_file)
+                except YAMLError as err:
+                    err_msg = 'Config file YAML format error: {0}'.format(err)
+                    print('-' * 60, file=sys.stderr)
+                    print(err_msg, file=sys.stderr)
+                    print('-' * 60, file=sys.stderr)
+                    logger.fatal(err_msg)
+                    sys.exit(1)
+                except ValidationError as err:
+                    err_msg = 'Invalid config file: {0}'.format(err)
+                    print('-' * 60, file=sys.stderr)
+                    print(err_msg, file=sys.stderr)
+                    print('-' * 60, file=sys.stderr)
+                    logger.fatal(err_msg)
+                    sys.exit(1)
+                else:
+                    logger.info('configuration: %s', glb.config)
+
+                if not initialed:
+                    Performer.initial()
+                    initialed = True
                 Performer.run_once()
+
+                interval = float(glb.config['watcher']['interval'])
                 sleep_secs = interval - (time() - ts)
                 if sleep_secs > 0:
                     sleep(sleep_secs)

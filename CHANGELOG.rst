@@ -1,6 +1,13 @@
 Changelog
 *********
 
+develop
+=======
+
+Added
+-----
+* Reload configuration every time before scanning files.
+
 0.1b2
 =====
 
