@@ -37,6 +37,7 @@ setup(
     tests_require=[
         'pytest',
         'python-dotenv',
+        'pathlib2;python_version<"3.4"',
     ],
     test_suite='tests',
 
