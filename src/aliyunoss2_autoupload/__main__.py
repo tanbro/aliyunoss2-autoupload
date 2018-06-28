@@ -91,14 +91,7 @@ def main():
 
                 try:
                     conf.load_program_config(_arguments.config_file)
-                except YAMLError as err:
-                    err_msg = 'Config file YAML format error: {0}'.format(err)
-                    print('-' * 60, file=sys.stderr)
-                    print(err_msg, file=sys.stderr)
-                    print('-' * 60, file=sys.stderr)
-                    logger.fatal(err_msg)
-                    sys.exit(1)
-                except ValidationError as err:
+                except (YAMLError, ValidationError) as err:
                     err_msg = 'Invalid config file: {0}'.format(err)
                     print('-' * 60, file=sys.stderr)
                     print(err_msg, file=sys.stderr)

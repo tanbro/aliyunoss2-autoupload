@@ -21,29 +21,12 @@ load_dotenv()
 str_ver = '{0[0]}.{0[1]}-{1}'.format(sys.version_info, sys.platform)
 
 
-class RunOnceTestCase(unittest.TestCase):
+class MainRunOnceTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(RunOnceTestCase, self).__init__(*args, **kwargs)
+        super(MainRunOnceTestCase, self).__init__(*args, **kwargs)
         self.conf_buf = None  # type: io.StringIO
 
     def setUp(self):
-
-        # prog.yml
-        with io.StringIO() as stream:
-            conf.print_config('prog', stream)
-            data = yaml.safe_load(stream.getvalue())
-        # Fake OSS config
-        data['oss'] = dict(
-            name=os.environ.get('OSS_NAME'),
-            endpoint=os.environ.get('OSS_ENDPOINT'),
-            access_key_id=os.environ.get('OSS_ACCESS_KEY_ID'),
-            access_key_secret=os.environ.get('OSS_ACCESS_KEY_SECRET'),
-        )
-        # Fake load
-        with io.StringIO(to_unicode(yaml.safe_dump(data))) as stream:
-            stream.seek(0)
-            conf.load_program_config(stream)
-
         # Fake arguments
         main_module.parse_arguments(['run', '--only-once'])
 
