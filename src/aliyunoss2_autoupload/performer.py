@@ -48,7 +48,8 @@ class Performer(LoggerMixin):
 
     @classmethod
     def release(cls):
-        cls._executor.shutdown()
+        if cls._executor:
+            cls._executor.shutdown()
 
     @classmethod
     def run_once(cls):

@@ -19,6 +19,7 @@ After the package installed, run the command in a terminator, show help messages
 .. code-block:: console
 
     $ aliyunoss2-autoupload --help
+
     usage: aliyunoss2-autoupload [-h] [--version] {run,echo_config_sample} ...
 
     Watch files in a directory and upload them to Aliyun OSS on file writing
@@ -39,29 +40,34 @@ After the package installed, run the command in a terminator, show help messages
 .. code-block:: console
 
     $ aliyunoss2-autoupload run --help
-    usage: aliyunoss2-autoupload run [-h] [--config-file CONFIG_FILE]
-                                    [--logging-config-file LOGGING_CONFIG_FILE]
+
+    usage: aliyunoss2-autoupload run [-h] [--only-once]
+                                     [--config-file CONFIG_FILE]
+                                     [--logging-config-file LOGGING_CONFIG_FILE]
 
     optional arguments:
-    -h, --help            show this help message and exit
-    --config-file CONFIG_FILE, -c CONFIG_FILE
+      -h, --help            show this help message and exit
+      --only-once, -o       Upload only once, then exit. Will NOT monitor files.
+                            (default=False)
+      --config-file CONFIG_FILE, -c CONFIG_FILE
                             The program configuration file. The program will first
-                            try to load configuration file from environment
-                            variable ${ALIYUNOSS2_AUTOUPLOAD_CONF}. If the
-                            environment variable not assigned, then try to load
-                            configuration file from
-                            "conf/aliyunoss2-autoupload.yml"
-    --logging-config-file LOGGING_CONFIG_FILE, -l LOGGING_CONFIG_FILE
+                            try to load configuration file by environment variable
+                            ${ALIYUNOSS2_AUTOUPLOAD_CONF}. If the environment
+                            variable not assigned, then try to load configuration
+                            file "conf/aliyunoss2-autoupload.yml"
+      --logging-config-file LOGGING_CONFIG_FILE, -l LOGGING_CONFIG_FILE
                             The logging configuration file. The program will first
-                            try to load configuration file from environment
+                            try to load logging configuration file by environment
                             variable ${ALIYUNOSS2_AUTOUPLOAD_LOG_CONF}. If the
                             environment variable not assigned, then try to load
-                            configuration file from
+                            configuration file
                             "conf/aliyunoss2-autoupload.log.yml"
+
 
 .. code-block:: console
 
     $ aliyunoss2-autoupload echo_config_sample --help
+
     usage: aliyunoss2-autoupload echo_config_sample [-h] {prog,log}
 
     positional arguments:
