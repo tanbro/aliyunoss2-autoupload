@@ -17,9 +17,10 @@ from . import version
 from .performer import Performer
 
 _parser = None  # type: argparse.ArgumentParser
+_arguments = None  # type: argparse.Namespace
 
 
-def set_get_arguments():  # type:()->argparse.Namespace
+def parse_arguments():  # type:()->argparse.Namespace
     global _parser
     _parser = argparse.ArgumentParser(
         prog=version.NAME,
@@ -62,18 +63,20 @@ def set_get_arguments():  # type:()->argparse.Namespace
         'config', type=str, choices=['prog', 'log'],
         help='Configure file to echo')
 
-    arguments = _parser.parse_args()
-    return arguments
+    global _arguments
+    _arguments = _parser.parse_args()
+    return _arguments
 
 
 def main():
-    arguments = set_get_arguments()
+    if _arguments is None:
+        parse_arguments()
 
-    if arguments.sub_command == 'echo_config_sample':
-        conf.print_config(arguments.config)
+    if _arguments.sub_command == 'echo_config_sample':
+        conf.print_config(_arguments.config)
 
-    elif arguments.sub_command == 'run':
-        conf.load_logging_config(arguments.logging_config_file)
+    elif _arguments.sub_command == 'run':
+        conf.load_logging_config(_arguments.logging_config_file)
         logger = get_logger()
 
         logger.info('-' * 60)
@@ -87,7 +90,7 @@ def main():
                 ts = time()
 
                 try:
-                    conf.load_program_config(arguments.config_file)
+                    conf.load_program_config(_arguments.config_file)
                 except YAMLError as err:
                     err_msg = 'Config file YAML format error: {0}'.format(err)
                     print('-' * 60, file=sys.stderr)
@@ -110,7 +113,7 @@ def main():
                     initialed = True
                 Performer.run_once()
 
-                if arguments.only_once:
+                if _arguments.only_once:
                     break
 
                 interval = float(glb.config['watcher']['interval'])
@@ -124,7 +127,8 @@ def main():
             logger.exception('')
             raise
         finally:
-            Performer.release()
+            if initialed:
+                Performer.release()
             logger.info('=' * 60)
             logger.info('Stopped')
             logger.info('=' * 60)

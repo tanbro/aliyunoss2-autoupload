@@ -13,6 +13,8 @@ from aliyunoss2_autoupload.performer import Performer
 
 _PYTHON_VERSION_MAYOR_MINOR = '{0[0]}.{0[1]}'.format(sys.version_info)
 
+from io import StringIO
+
 load_dotenv()
 
 str_ver = '{0[0]}.{0[1]}-{1}'.format(sys.version_info, sys.platform)
@@ -21,15 +23,17 @@ str_ver = '{0[0]}.{0[1]}-{1}'.format(sys.version_info, sys.platform)
 class OssAutoUploadTestCase(unittest.TestCase):
     def setUp(self):
         os.makedirs('tests/conf')
-        cfg_files = {
-            'log': 'tests/conf/log.yml',
-            'prog': 'tests/conf/prog.yml',
-        }
-        for conf_name, conf_file in cfg_files.items():
-            with open(conf_file, 'w') as f:
-                conf.print_config(conf_name, f)
-        conf.load_logging_config(cfg_files['log'])
-        conf.load_program_config(cfg_files['prog'])
+        # log.yml
+        conf_file = 'tests/conf/log.yml'
+        with open(conf_file, 'w') as f:
+            conf.print_config('log', f)
+        conf.load_logging_config(conf_file)
+
+        # prog.yml
+        conf_file = 'tests/conf/prog.yml'
+        with open(conf_file, 'w') as f:
+            conf.print_config('prog', f)
+        conf.load_program_config(conf_file)
         # Fake OSS config
         glb.config['oss'] = dict(
             name=os.environ.get('OSS_NAME'),

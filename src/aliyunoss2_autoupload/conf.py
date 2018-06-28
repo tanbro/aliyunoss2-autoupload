@@ -9,7 +9,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import logging.config
 import os
 import sys
-from io import FileIO
+from io import StringIO, TextIOBase
 
 import yaml
 from marshmallow import Schema, fields
@@ -94,7 +94,18 @@ class ConfSchema(Schema):
 conf_scheme = ConfSchema()
 
 
-def load_program_config(file_path):
+def load_yml(obj):
+    if isinstance(obj, str):
+        with open(obj) as f:
+            data = f.read()
+    elif isinstance(obj, (StringIO, TextIOBase)):
+        data = obj.read()
+    else:
+        raise TypeError('Invalid file-like object or stream: {0!r}'.format(obj))
+    return yaml.load(data, YamlLoader)
+
+
+def load_program_config(obj=None):
     """加载配置文件
 
     :return: 配置字典
@@ -104,34 +115,33 @@ def load_program_config(file_path):
     * 否则以相对路径 ``conf/aliyunoss2-autoupload.yml`` 作为配置文件路径。
     """
     # load
-    if not file_path:
-        file_path = os.environ.get(ENVIRON_PROGRAM_CONFIG_PATH)
-    if not file_path:
-        file_path = DEFAULT_PROGRAM_CONFIG_PATH
-    with open(file_path) as f:
-        data = yaml.load(f, YamlLoader)
+    if not obj:
+        obj = os.environ.get(ENVIRON_PROGRAM_CONFIG_PATH)
+        if not obj:
+            obj = DEFAULT_PROGRAM_CONFIG_PATH
+    data = load_yml(obj)
     # validate!
     config = conf_scheme.load(data)  # type: dict
     glb.config = config
     return config
 
 
-def load_logging_config(file_path):
+def load_logging_config(obj=None):
     """加载 logging 配置文件
 
     * 如果设置了环境变量 ``ALIYUNOSS2_AUTOUPLOAD_LOG_CONF`` ，以该环境变量的值作为配置文件路径。
     * 否则以相对路径 ``conf/aliyunoss2-autoupload.log.yml`` 作为配置文件路径。
     """
-    if not file_path:
-        file_path = os.environ.get(ENVIRON_LOGGING_CONFIG_PATH)
-    if not file_path:
-        file_path = DEFAULT_LOGGING_CONFIG_PATH
+    if not obj:
+        obj = os.environ.get(ENVIRON_LOGGING_CONFIG_PATH)
+        if not obj:
+            obj = DEFAULT_LOGGING_CONFIG_PATH
     try:
-        data = yaml.load(FileIO(file_path), YamlLoader)
+        data = load_yml(obj)
         logging.config.dictConfig(data)
     except Exception as err:
         logging.warning(
-            'Load logging config file `%s` failed: %s', file_path, err)
+            'Load logging config file %r failed: %s', obj, err)
         logging.basicConfig()
 
 
