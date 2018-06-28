@@ -9,6 +9,10 @@ Added
 * Reload configuration every time before scanning files.
 * `--only-once` command line option.
 
+Optimized
+---------
+* test case for ``main()`` function
+
 0.1b2
 =====
 
