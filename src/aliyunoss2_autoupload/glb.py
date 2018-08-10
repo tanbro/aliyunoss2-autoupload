@@ -4,4 +4,5 @@
 """global variables here
 """
 
+# pylint:disable=invalid-name
 config = {}  # type: dict

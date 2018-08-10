@@ -15,7 +15,7 @@ import oss2
 from oss2.exceptions import OssError
 
 try:
-    import crcmod._crcfunext
+    import crcmod._crcfunext  # pylint:disable=unused-import
 except ImportError as err:
     ENABLE_CRC = False
     print('{0}. CRC DISABLED'.format(err), file=sys.stderr)
@@ -53,6 +53,8 @@ class Performer(LoggerMixin):
 
     @classmethod
     def run_once(cls):
+        # pylint:disable=invalid-name
+
         logger = cls.get_logger()
 
         now_ts = time()
@@ -83,6 +85,8 @@ class Performer(LoggerMixin):
 
     @classmethod
     def _execute_task(cls, task):  # type: (Task) -> bool
+        # pylint:disable=invalid-name
+
         begin_ts = time()
 
         logger = cls.get_logger()
@@ -138,7 +142,7 @@ class Performer(LoggerMixin):
                 return False
 
         except Exception:
-            logger.exception('execute_task({!r})'.format(task))
+            logger.exception('execute_task({%r})', task)
             raise
 
         finally:
@@ -148,6 +152,8 @@ class Performer(LoggerMixin):
 
     @classmethod
     def _get_oss_bucket(cls):
+        # pylint:disable=invalid-name
+
         cfg = glb.config['oss']
         endpoint = cfg['endpoint'].strip()  # type: str
         bucket_name = cfg['name'].strip()  # type: str
@@ -160,7 +166,7 @@ class Performer(LoggerMixin):
         return bucket
 
 
-class Task(object):
+class Task:
 
     def __init__(self, path):
         self._path = path

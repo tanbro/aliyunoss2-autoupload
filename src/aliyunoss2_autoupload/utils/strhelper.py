@@ -8,6 +8,8 @@ from __future__ import absolute_import, unicode_literals, with_statement
 
 __all__ = ['to_bytes', 'to_str', 'to_unicode']
 
+# pylint:disable=invalid-name
+
 if bytes != str:  # Python 3
     #: Define text string data type, same server that in Python 2.x.
     unicode = str
@@ -29,8 +31,7 @@ def to_bytes(s, encoding='utf-8'):
     """
     if isinstance(s, unicode):
         return s.encode(encoding)
-    else:
-        return s
+    return s
 
 
 def to_str(s, encoding='utf-8'):
@@ -50,8 +51,8 @@ def to_str(s, encoding='utf-8'):
     """
     if bytes == str:  # Python 2
         return to_bytes(s, encoding)
-    else:  # Python 3
-        return to_unicode(s, encoding)
+    # Python 3
+    return to_unicode(s, encoding)
 
 
 def to_unicode(s, encoding='utf-8'):
@@ -70,5 +71,4 @@ def to_unicode(s, encoding='utf-8'):
     """
     if isinstance(s, bytes):
         return s.decode(encoding)
-    else:
-        return s
+    return s

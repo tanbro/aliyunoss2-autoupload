@@ -16,12 +16,14 @@ from . import glb
 from . import version
 from .performer import Performer
 
+# pylint:disable=invalid-name
+
 _parser = None  # type: argparse.ArgumentParser
 _arguments = None  # type: argparse.Namespace
 
 
 def parse_arguments(args=None):  # type:()->argparse.Namespace
-    global _parser
+    global _parser  # pylint:disable=global-statement
     _parser = argparse.ArgumentParser(
         prog=version.NAME,
         description='Watch files in a directory and upload them to Aliyun OSS on file writing completed')
@@ -63,12 +65,13 @@ def parse_arguments(args=None):  # type:()->argparse.Namespace
         'config', type=str, choices=['prog', 'log'],
         help='Configure file to echo')
 
-    global _arguments
+    global _arguments  # pylint:disable=global-statement
     _arguments = _parser.parse_args(args)
     return _arguments
 
 
 def main():
+    # pylint:disable=too-many-branches
     if _arguments is None:
         parse_arguments(sys.argv[1:])
 

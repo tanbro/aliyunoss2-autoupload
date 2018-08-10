@@ -19,9 +19,9 @@ from . import version
 from .utils.strhelper import to_str
 
 try:
-    from yaml import CSafeLoader as YamlLoader
+    from yaml import CSafeLoader as YamlLoader  # pylint:disable=ungrouped-imports
 except ImportError:
-    from yaml import SafeLoader as YamlLoader
+    from yaml import SafeLoader as YamlLoader  # pylint:disable=ungrouped-imports
 
 __all__ = ['load_program_config', 'load_logging_config']
 
@@ -90,17 +90,17 @@ class ConfSchema(Schema):
     watcher = fields.Nested(WatcherSchema, required=True)
 
 
-conf_scheme = ConfSchema()
+conf_scheme = ConfSchema()  # pylint:disable=invalid-name
 
 
 def load_yml(obj):
     if isinstance(obj, str):
-        with open(obj) as f:
+        with open(obj) as f:  # pylint:disable=invalid-name
             data = f.read()
     else:
         try:
             read_meth = getattr(obj, 'read')
-        except AttributeError:
+        except AttributeError:  # pylint:disable=try-except-raise
             raise
         else:
             data = read_meth()
@@ -146,8 +146,7 @@ def load_logging_config(obj=None):
         print('-' * 60, file=sys.stderr)
         print(err_msg, file=sys.stderr)
         print('-' * 60, file=sys.stderr)
-        logging.warning(err_msg)
-        logging.basicConfig()
+        raise
 
 
 def print_config(cfg, print_file=sys.stdout):

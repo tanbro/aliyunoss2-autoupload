@@ -5,7 +5,7 @@ import logging
 __all__ = ['LoggerMixin']
 
 
-class LoggerMixin(object):
+class LoggerMixin(object):  # pylint: disable=useless-object-inheritance
     """
     Mixin Class provides a :attr:`logger` (:class:`logging.Logger`)  property
 
